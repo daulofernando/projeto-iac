@@ -35,7 +35,11 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+# Packer cache
 packer_cache/
+
+# Packer outputs
+outputs.json
 
 # Crash log
 crash.log

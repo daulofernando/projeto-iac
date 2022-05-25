@@ -1,46 +1,51 @@
 ---
 - name: "Criando usuários para o prometheus"
   ansible.builtin.user:
-    name: prometheus 
+    name: "{{ item }}" 
     state: present
-    shell: /bin/false        
-
-- name: "Criando usuários para o node exporter"
-  user:
-    name: node_exporter
-    state: present
-    shell: /bin/false
-  
-- name: "Criando diretorio em /etc/prometheus"
+    shell: /bin/false  
+  loop:
+  - prometheus
+  - node_exporter      
+ 
+- name: "Criando diretorio para funcionamento do prometheus"
   file:
-    path: /etc/prometheus
+    path: "{{ item }}"
     state: directory
-
-- name: "Criando diretorio em /var/lib/prometheus"
-  file:
-    path: /var/lib/prometheus
-    state: directory 
+  loop:
+  - /var/lib/prometheus
+  - /etc/prometheus
+  - /tmp/prometheus # necessário para extrair o prometheus
 
 - name: "Baixando o prometheus"
   get_url: 
-    url: "https://github.com/prometheus/prometheus/releases/download/v2.31.1/prometheus-2.31.1.linux-amd64.tar.gz"
+    url: https://github.com/prometheus/prometheus/releases/download/v2.31.1/prometheus-2.31.1.linux-amd64.tar.gz
     dest: /tmp/prometheus.tar
 
 - name: "Descompactando o prometheus"
   unarchive:
     src: /tmp/prometheus.tar
-    dest: /tmp
+    dest: /tmp/prometheus
+    extra_opts: [--strip-components=1]
     remote_src: yes
 
-- name: "Copiando arquivos do prometheus para /usr/local/bin"
+- name: "Copiando arquivo prometheus para /usr/local/bin"
   copy:
-    src: /tmp/prometheus*/prom*
-    dest: /usr/local/bin/
+    src: "{{ item }}" 
+    dest: /usr/local/bin
+    remote_src: yes 
+  loop:   
+  - /tmp/prometheus/prometheus
+  - /tmp/prometheus/promtool
 
-- name: "Copiando arquivos do prometheus para /etc/prometheus"
+- name: "Copiando arquivo prometheus para /etc/prometheus"
   copy:
-   src: /tmp/prometheus*/con*
-   dest: /etc/prometheus
+    src: "{{ item }}" 
+    dest: /etc/prometheus
+    remote_src: yes 
+  loop:   
+  - /tmp/prometheus/consoles
+  - /tmp/prometheus/console_libraries
 
 - name: "Tornando o usuário prometheus dono das pastas criadas"
   file:
@@ -50,7 +55,8 @@
   loop: 
   - /etc/prometheus
   - /var/lib/prometheus
-  - /usr/local/bin/prom*
+  - /usr/local/bin/promtool
+  - /usr/local/bin/prometheus
   
 - name: "Copiando arquivo prometheus.service"
   template:
