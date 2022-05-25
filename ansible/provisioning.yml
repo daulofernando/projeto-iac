@@ -1,0 +1,8 @@
+--- 
+- name: "Instalando grafana e o prometheus"
+  hosts: all
+  become: yes
+
+  roles:
+    - grafana
+    - prometheus  
