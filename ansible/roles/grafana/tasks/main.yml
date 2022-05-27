@@ -9,7 +9,7 @@
     state: latest
 
 - name: "Baixando a chave do grafana"
-  ansible.builtin.apt_key:
+  apt_key:
     url: "https://packages.grafana.com/gpg.key"
     state: present
 
