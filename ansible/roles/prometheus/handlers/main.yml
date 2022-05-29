@@ -3,3 +3,4 @@
   service:
     name: prometheus
     state: reloaded
+    enabled: yes    

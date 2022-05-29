@@ -1,6 +1,6 @@
 ---
 - name: "Criando usuários para o prometheus"
-  ansible.builtin.user:
+  user:
     name: "{{ item }}" 
     state: present
     shell: /bin/false  
@@ -29,38 +29,37 @@
     extra_opts: [--strip-components=1]
     remote_src: yes
 
-- name: "Copiando arquivo prometheus para /usr/local/bin"
+- name: "Copiando arquivos do prometheus"
   copy:
-    src: "{{ item }}" 
-    dest: /usr/local/bin
+    src: "{{ item.src }}" 
+    dest: "{{ item.dest }}" 
     remote_src: yes 
   loop:   
-  - /tmp/prometheus/prometheus
-  - /tmp/prometheus/promtool
+  - { src: '/tmp/prometheus/consoles', dest: '/etc/prometheus' }
+  - { src: '/tmp/prometheus/console_libraries', dest: '/etc/prometheus' }
+  - { src: '/tmp/prometheus/prometheus', dest: '/usr/local/bin' }
+  - { src: '/tmp/prometheus/promtool', dest: '/usr/local/bin' }
 
-- name: "Copiando arquivo prometheus para /etc/prometheus"
-  copy:
-    src: "{{ item }}" 
-    dest: /etc/prometheus
-    remote_src: yes 
-  loop:   
-  - /tmp/prometheus/consoles
-  - /tmp/prometheus/console_libraries
-
-- name: "Tornando o usuário prometheus dono das pastas criadas"
+- name: "Tornando o usuário prometheus dono das pastas e arquivos"
   file:
-    path: "{{ item }}"
+    path: "{{ item.src }}"
     owner: prometheus
     group: prometheus
+    state: "{{ item.state }}"
+    recurse: "{{ item.recursive }}"
+    mode: "{{ item.mode }}"
   loop: 
-  - /etc/prometheus
-  - /var/lib/prometheus
-  - /usr/local/bin/promtool
-  - /usr/local/bin/prometheus
-  
-- name: "Copiando arquivo prometheus.service"
+  - { src: '/etc/prometheus', state: 'directory', recursive: 'yes', mode: '' }
+  - { src: '/var/lib/prometheus', state: 'directory', recursive: 'yes', mode: '' }
+  - { src: '/usr/local/bin/prometheus', state: 'file', recursive: 'no', mode: '+x' }
+  - { src: '/usr/local/bin/promtool', state: 'file', recursive: 'no', mode: '' }
+
+- name: "Copiando arquivos para funcionamento do prometheus"
   template:
-    src: ../templates/prometheus.service
-    dest: /etc/systemd/system/prometheus.service
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { src: '../templates/prometheus.yml', dest: '/etc/prometheus/prometheus.yml' }
+    - { src: '../templates/prometheus.service', dest: '/etc/systemd/system/prometheus.service' }
 
   notify: restart-prometheus

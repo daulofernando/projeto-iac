@@ -3,3 +3,4 @@
   service:
     name: grafana-server
     state: reloaded
+    enabled: yes
