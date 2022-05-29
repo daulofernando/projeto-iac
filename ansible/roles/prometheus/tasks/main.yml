@@ -19,7 +19,7 @@
 
 - name: "Baixando o prometheus"
   get_url: 
-    url: {{ prometheuslink }}
+    url: https://github.com/prometheus/prometheus/releases/download/v2.31.1/prometheus-2.31.1.linux-amd64.tar.gz
     dest: /tmp/prometheus.tar
 
 - name: "Descompactando o prometheus"
