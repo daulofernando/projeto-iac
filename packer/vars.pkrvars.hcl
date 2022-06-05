@@ -1,0 +1,5 @@
+release="3.0"
+region = "us-west-1"
+ami_name = "Monitoramento"
+description = "AMI com o grafane e prometheus."
+instance_type = "t2.micro"

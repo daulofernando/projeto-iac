@@ -2,7 +2,7 @@ variable "key" {
   default = ""
 }
 
-variable "ami-packer" {
+variable "packer_ami_name" {
   type = string
   default = ""
 }

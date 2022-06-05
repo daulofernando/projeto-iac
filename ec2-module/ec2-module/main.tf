@@ -1,5 +1,5 @@
 terraform {
-  required_version = "1.1.7"
+  required_version = "1.1.9"
 
   required_providers {
     aws = {
@@ -8,6 +8,11 @@ terraform {
     }
   }
 
+  lifecycle {
+    ignore_changes = [
+      ami,
+    ]
+  }
 }
 
 

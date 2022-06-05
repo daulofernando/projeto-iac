@@ -1,12 +1,14 @@
-variables {
-  region = "us-west-1"
-  name = "GrafanaPrometheus"
-}
-
 source "amazon-ebs" "ubuntu" {
-  ami_name      = var.name
-  instance_type = "t2.micro"
+  ami_name      = var.ami_name 
+  instance_type = var.instance_type
   region        = var.region
+
+  tags = {
+    Name    = var.ami_name 
+    Base_AMI_Name = "{{ .SourceAMIName }}"
+    Release = var.release
+    Description = var.description
+  }
 
   source_ami_filter {
     filters = {
@@ -17,13 +19,6 @@ source "amazon-ebs" "ubuntu" {
     owners      = ["099720109477"]
     most_recent = true
   }
-
-  tags = {
-    Name    = "ubuntu 20.04"
-    esquema = "testes"
-  }
-
-  ssh_username = "ubuntu"
 }
 
 build {

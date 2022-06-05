@@ -1,5 +1,5 @@
 resource "aws_instance" "ec2" {
-  ami                    = var.ami-packer
+  ami                    = data.aws_ami.ubuntu.id
   availability_zone      = var.availability-zone
   instance_type          = var.instance-type
   vpc_security_group_ids = ["${aws_security_group.sg.id}"]

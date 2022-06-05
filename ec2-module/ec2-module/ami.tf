@@ -3,14 +3,14 @@ data "aws_ami" "ubuntu" {
   most_recent = true
 
   filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+    name   = "tag:Release"
+    values = ["2.0"]
   }
 
   filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+    name = "tag:Name"
+    values = ["Monitoramento"]
   }
 
-  owners = ["099720109477"]
+  owners = ["self"]
 }
