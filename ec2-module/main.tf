@@ -16,7 +16,6 @@ provider "aws" {
 module "ec2" {
   source = "./ec2-module"
   
-  packer_ami_name   = "ubuntu 20.04"
   instance-type     = "t2.micro"
   availability-zone = "us-west-1b"
   instance-name     = "ec2-modulo"

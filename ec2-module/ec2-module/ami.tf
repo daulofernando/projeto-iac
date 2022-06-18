@@ -4,7 +4,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "tag:Release"
-    values = ["2.0"]
+    values = ["3.0"]
   }
 
   filter {
